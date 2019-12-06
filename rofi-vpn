@@ -1,0 +1,26 @@
+#!/bin/zsh
+#
+# rofi-mode to connect to a selected VPN connection via nmcli
+
+
+function show_available_vpns {
+    nmcli --get type,name connection show | grep '^vpn' | cut -d: -f2
+}
+
+
+function shutdown_active_vpns {
+    ACTIVE_VPNS=( ${(f)"$(nmcli --get type,name connection show --active | grep '^vpn' | cut -d: -f2)"} )
+    for VPN in ${ACTIVE_VPNS[@]}; do
+        nmcli connection down $VPN || true
+    done
+}
+
+
+if [ -z $@ ]; then
+    show_available_vpns
+else
+    shutdown_active_vpns >/dev/null
+    nmcli connection up $@ >/dev/null
+fi
+
+# vim:set ft=zsh noexpandtab:
