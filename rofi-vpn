@@ -12,7 +12,7 @@ function shutdown_active_vpns {
 	local ACTIVE_VPNS=( ${(f)"$(nmcli --get type,name connection show --active | grep '^vpn' | cut -d: -f2)"} )
 	local VPN
 	for VPN in ${ACTIVE_VPNS[@]}; do
-		nmcli connection down $VPN || true
+		nmcli connection down $VPN >/dev/null || true
 	done
 }
 
