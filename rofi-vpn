@@ -4,23 +4,25 @@
 
 
 function show_available_vpns {
-    nmcli --get type,name connection show | grep '^vpn' | cut -d: -f2
+	nmcli --get type,name connection show | grep '^vpn' | cut -d: -f2
 }
 
 
 function shutdown_active_vpns {
-    ACTIVE_VPNS=( ${(f)"$(nmcli --get type,name connection show --active | grep '^vpn' | cut -d: -f2)"} )
-    for VPN in ${ACTIVE_VPNS[@]}; do
-        nmcli connection down $VPN || true
-    done
+	local ACTIVE_VPNS=( ${(f)"$(nmcli --get type,name connection show --active | grep '^vpn' | cut -d: -f2)"} )
+	local VPN
+	for VPN in ${ACTIVE_VPNS[@]}; do
+		nmcli connection down $VPN || true
+	done
 }
 
 
-if [ -z $@ ]; then
-    show_available_vpns
+if [ -z $1 ]; then
+	show_available_vpns
+	echo Shutdown
 else
-    shutdown_active_vpns >/dev/null
-    nmcli connection up $@ >/dev/null
+	shutdown_active_vpns
+	[ "x$1" -eq "xShutdown" ] || nmcli connection up "$1" >/dev/null &
 fi
 
 # vim:set ft=zsh noexpandtab:
