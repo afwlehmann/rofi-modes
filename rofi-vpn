@@ -21,8 +21,10 @@ if [ -z $1 ]; then
 	show_available_vpns
 	echo Shutdown
 else
-	shutdown_active_vpns
-	[ "x$1" -eq "xShutdown" ] || nmcli connection up "$1" >/dev/null &
+	(
+		shutdown_active_vpns
+		[ "x$1" -eq "xShutdown" ] || nmcli connection up "$1" >/dev/null
+	) &
 fi
 
 # vim:set ft=zsh noexpandtab:
