@@ -1,0 +1,30 @@
+#!/usr/bin/env zsh
+#
+# rofi-mode to connect to a selected Wifi connection via nmcli
+
+
+function show_known_wlans {
+	nmcli --get type,name connection show | grep -E '^(wifi|802-11-wireless)' | cut -d: -f2
+}
+
+
+if [ -z $1 ]; then
+	show_known_wlans
+	echo radio on
+	echo radio off
+else
+	(
+		case "$1" in
+			"radio on")
+				nmcli radio wifi on
+				;;
+			"radio off")
+				nmcli radio wifi off
+				;;
+			*)
+				nmcli connection up "$1" >/dev/null
+		esac
+	) &
+fi
+
+# vim:set ft=zsh noexpandtab:
