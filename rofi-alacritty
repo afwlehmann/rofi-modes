@@ -1,0 +1,20 @@
+#!/usr/bin/env zsh
+#
+# rofi-mode to switch Alacritty themes
+
+
+CONFIG=$HOME/.config/alacritty/alacritty.yml
+
+
+function parse_available_themes {
+	yq -r '.schemes | keys | .[]' <$CONFIG
+}
+
+
+if [ -z $1 ]; then
+	parse_available_themes
+else
+	sed -i "/^colors:/c colors: *$1" $CONFIG
+fi
+
+# vim:set ft=zsh noexpandtab:
